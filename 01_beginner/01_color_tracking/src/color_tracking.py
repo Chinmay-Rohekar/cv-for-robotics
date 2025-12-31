@@ -11,6 +11,7 @@ def main():
     # Open webcam (0 = default camera)
     cap = cv2.VideoCapture(0)
 
+    # Creating the six trackbars for the H,S and V values
     cv2.namedWindow("Trackbars")
     cv2.createTrackbar("H_min", "Trackbars", 100, 179, nothing)
     cv2.createTrackbar("H_max", "Trackbars", 140, 179, nothing)
@@ -19,10 +20,12 @@ def main():
     cv2.createTrackbar("V_min", "Trackbars", 50, 255, nothing)
     cv2.createTrackbar("V_max", "Trackbars", 255, 255, nothing)
 
+    # Error in opening the camera
     if not cap.isOpened():
         print("Error: Cannot open camera")
         return
 
+    # Continuously displaying the video
     while True:
         ret, frame = cap.read()
         if not ret:

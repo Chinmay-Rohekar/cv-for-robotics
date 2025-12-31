@@ -16,3 +16,8 @@ Track a colored object in real time using classical computer vision techniques.
 
 ## Expected Output
 Bounding box and centroid over the tracked object.
+
+## Results
+- Real-time bounding box and centroid on tracked object
+- Mask visualization shows clean detection
+- HSV trackbars allow dynamic tuning for lighting conditions
