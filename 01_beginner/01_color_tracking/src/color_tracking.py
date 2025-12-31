@@ -2,10 +2,22 @@
 import cv2              # Computer Vision
 import numpy as np      # Numpy
 
+# An empty function for the Trackbars
+def nothing(x):
+    pass
+
 
 def main():
     # Open webcam (0 = default camera)
     cap = cv2.VideoCapture(0)
+
+    cv2.namedWindow("Trackbars")
+    cv2.createTrackbar("H_min", "Trackbars", 100, 179, nothing)
+    cv2.createTrackbar("H_max", "Trackbars", 140, 179, nothing)
+    cv2.createTrackbar("S_min", "Trackbars", 150, 255, nothing)
+    cv2.createTrackbar("S_max", "Trackbars", 255, 255, nothing)
+    cv2.createTrackbar("V_min", "Trackbars", 50, 255, nothing)
+    cv2.createTrackbar("V_max", "Trackbars", 255, 255, nothing)
 
     if not cap.isOpened():
         print("Error: Cannot open camera")
@@ -19,12 +31,25 @@ def main():
         # Convert BGR to HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
+        # Get current positions of trackbars
+        h_min = cv2.getTrackbarPos("H_min", "Trackbars")
+        h_max = cv2.getTrackbarPos("H_max", "Trackbars")
+        s_min = cv2.getTrackbarPos("S_min", "Trackbars")
+        s_max = cv2.getTrackbarPos("S_max", "Trackbars")
+        v_min = cv2.getTrackbarPos("V_min", "Trackbars")
+        v_max = cv2.getTrackbarPos("V_max", "Trackbars")
+
         # Define color range (BLUE object)
-        lower_blue = np.array([100, 150, 50])
-        upper_blue = np.array([140, 255, 255])
+        lower_blue = np.array([h_min, s_min, v_min])
+        upper_blue = np.array([h_max, s_max, v_max])
 
         # Create mask
         mask = cv2.inRange(hsv, lower_blue, upper_blue)
+
+        # Noise removal
+        kernel = np.ones((5, 5), np.uint8)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)  # Remove small objects
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)  # Fill small holes
 
         # Find contours
         contours, _ = cv2.findContours(
